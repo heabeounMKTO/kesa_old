@@ -11,8 +11,7 @@ def getImgSize(img):
 
 def resizeImg(img, targetSize, save_file=False):
     toPath = Path(img)
-    width = int(targetSize)
-    height = int(targetSize)
+    width, height = int(targetSize)
     dim = (width, height)
 
     image = cv2.imread(img)
@@ -41,13 +40,13 @@ def resizeImg(img, targetSize, save_file=False):
             cv2.imwrite(savePath, resize)
     else:
         return resize
-        
+
 
 def toGreyScale(img, save_file=False):
     toPath = Path(img)
     image = cv2.imread(img)
     grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
+
     if save_file:
         grey_path = "tests/outputs/grey/"
         savePath = f"tests/outputs/grey/{toPath.stem}_greyscale.png"
@@ -60,4 +59,7 @@ def toGreyScale(img, save_file=False):
         return grey
 
 
-
+def flipImg(img, axis, save_file=False):
+    toPath = Path(img)
+    image = cv2.imread(img)
+    flip = cv2.flip(image, axis)
