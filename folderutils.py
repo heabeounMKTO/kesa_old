@@ -8,7 +8,7 @@ def get_image_files(path):
         for file in files:
             image_list.append(Path(root+file))
             
-    print(image_list)
+
     return image_list
 
 
