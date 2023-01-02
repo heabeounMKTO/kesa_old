@@ -1,0 +1,2 @@
+art==5.8
+opencv_python==4.7.0.68
