@@ -25,6 +25,10 @@ class labelCut:
         self.jsonArray = jsons
         
         return self.jsonArray
+    
+    def downloadRandomImages():
+        
+
 
 
     def readImageFromLabelme(self):
