@@ -4,6 +4,13 @@ from art import *
 
 print(text2art("kesa"))
 
+
+def main():
+    checkOutputFolder()
+    test = labelCut("imgs", "random")
+    test.randomBgFromLabelme()
+
+
 def checkOutputFolder():
     folders = ["random", "output"]
     print("looking for required folders")
@@ -15,7 +22,5 @@ def checkOutputFolder():
             print("folder ", folder, " found, skipping creation..")
 
 
-
-checkOutputFolder()
-test = labelCut("imgs", "random")
-test.randomBgFromLabelme()
+if __name__ == "__main__":
+    main()

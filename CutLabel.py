@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import random
 import uuid
+import tqdm
 
 class labelCut:
     def __init__(self, folder,randomImgFolder,randomImageArray=None, jsonArray=None,imageArray=None):
@@ -25,6 +26,7 @@ class labelCut:
         
         return self.jsonArray
 
+
     def readImageFromLabelme(self):
         imagefiles = []
         
@@ -36,7 +38,6 @@ class labelCut:
         '''
         for jsonfile in jsons:
             imagePath = ""
-            imageName = ""
             # extension = os.path.splitext(Path(json.load(open(jsonfile))['imagePath']))[1]       
             localDir = Path(json.load(open(jsonfile))['imagePath'])
             if localDir != "":
@@ -65,12 +66,10 @@ class labelCut:
     def randomBgFromLabelme(self):
         self.readImageFromLabelme() #load json
         randomimg = self.getRandomBackground()
-        print(len(randomimg))
         count = 0
-        for index, label in enumerate(self.jsonArray): 
+        for index, label in enumerate(tqdm.tqdm(self.jsonArray)): 
             loadjson = json.load(open(label))
             filename = os.path.splitext(loadjson["imagePath"])[0]
-            print("filename ",filename)
             imgpath = os.path.join(self.folder, loadjson["imagePath"])
             img = cv2.imread(imgpath)
             blackbg = np.zeros((img.shape[0], img.shape[1], 3))
