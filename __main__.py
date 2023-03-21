@@ -6,7 +6,6 @@ print(text2art("kesa"))
 
 
 def main():
-    checkOutputFolder()
     test = labelCut("imgs", "random")
     test.randomBgFromLabelme()
 
@@ -22,4 +21,6 @@ def checkOutputFolder():
 
 
 if __name__ == "__main__":
+    
+    checkOutputFolder()
     main()

@@ -1,6 +1,8 @@
 import json 
 import os
 from CutLabel import labelCut
+import yaml
+
 
 loadJson = labelCut("imgs", "random").lookForJson()
 
@@ -14,5 +16,8 @@ def getLabels():
     labels_list = sorted(labels_list)
     return labels_list
 
-print(getLabels())
-
+def writeLabelList():
+    labels = getLabels()
+    with open('labels.yaml', 'w') as file:
+         yaml.dump(labels, file)
+writeLabelList()
