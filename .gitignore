@@ -2,6 +2,7 @@ test/
 random/
 imgs/
 output/
+sample/
 *.ipynb
 ipynb_checkpoints
 # Byte-compiled / optimized / DLL files

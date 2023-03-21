@@ -16,7 +16,7 @@ class labelCut:
         self.imageArray = imageArray
         self.randomImgFolder = randomImgFolder
         
-    def lookForJson(self, folder):
+    def lookForJson(self):
         folder = Path(self.folder)
         jsons = []
         for roots, dir, files in os.walk(folder):
@@ -46,6 +46,8 @@ class labelCut:
             except(IOError, SyntaxError) as e:
                 print(f"found corrupted image{file}, deleting..")
                 os.remove(imgpath)
+    
+    
 
     def readImageFromLabelme(self):
         imagefiles = []
@@ -95,7 +97,7 @@ class labelCut:
             loadjson = json.load(open(label))
             filename = os.path.splitext(loadjson["imagePath"])[0]
             imgpath = os.path.join(self.folder, loadjson["imagePath"])
-            print("filename ", loadjson["imagePath"])
+            # print("filename ", loadjson["imagePath"])
             img = cv2.imread(imgpath)
             blackbg = np.zeros((img.shape[0], img.shape[1], 3))
             shape = loadjson["shapes"]            
