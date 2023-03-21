@@ -4,6 +4,11 @@ imgs/
 output/
 sample/
 ipynb_checkpoints
+c/tilestest01.v1i.yolov7pytorch
+c/tilestest01.v2i.yolov7pytorch
+c/tilestest01.v1i.yolov7pytorch.zip
+c/tilestest01.v2i.yolov7pytorch.zip
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
