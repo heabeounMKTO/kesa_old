@@ -22,7 +22,7 @@ class labelCut:
                     h=(os.path.join(os.getcwd(), folder))
                     jsons.append(os.path.join(h, file))
         self.jsonArray = jsons
-        print(jsons)
+        
         return self.jsonArray
 
     def readImageFromLabelme(self):
@@ -65,35 +65,36 @@ class labelCut:
     def randomBgFromLabelme(self):
         self.readImageFromLabelme() #load json
         randomimg = self.getRandomBackground()
-        print(self.jsonArray)
+        print(len(randomimg))
+        count = 0
         for index, label in enumerate(self.jsonArray): 
             loadjson = json.load(open(label))
-            try:
-                pts = loadjson["shapes"][index]["points"]
+            filename = os.path.splitext(loadjson["imagePath"])[0]
+            print("filename ",filename)
+            imgpath = os.path.join(self.folder, loadjson["imagePath"])
+            img = cv2.imread(imgpath)
+            blackbg = np.zeros((img.shape[0], img.shape[1], 3))
+            shape = loadjson["shapes"]            
+            for label in shape:
+                pts = label["points"]
                 mask = np.array(pts, np.int32)
-                img = cv2.imread(self.imageArray[index])
-                blackbg = np.zeros((img.shape[0], img.shape[1], 3))
-                gg = cv2.fillPoly(blackbg, pts = [mask], color=(255,255,255))
-                gg = gg.astype(np.uint8)
-                
-                result = cv2.cvtColor(cv2.bitwise_and(img, gg), 1)
-                _,alpha = cv2.threshold(result, 0, 255, cv2.THRESH_BINARY)
-                
-                cv2.imwrite(f"test/t{uuid.uuid4()}.png", alpha)
+                alpha = cv2.fillPoly(blackbg, pts = [mask], color=(255,255,255))
+                _, alpha = cv2.threshold(alpha, 0,255,cv2.THRESH_BINARY)
+                alpha = alpha.astype(np.uint8)
                 alpha = cv2.cvtColor(alpha, cv2.COLOR_BGR2GRAY)
+                cAlpha = cv2.merge([alpha,alpha,alpha])
                 b,g,r = cv2.split(img)
-                rgba = [b,g,r,alpha]
-                dst = cv2.merge(rgba,4)
-                
-                loadrandimg = cv2.imread(randomimg[random.randint(0, len(randomimg))])
-                loadrandimg = cv2.resize(loadrandimg, (img.shape[1], img.shape[0]))
-                
-                alpha = cv2.merge([alpha,alpha,alpha])
-                front = dst[:,:,0:3]
-                result = np.where(alpha==(0,0,0), loadrandimg, front)
-                    
-            except:
-                continue
+                ptCutout = cv2.merge([b,g,r,alpha], 4)
+                front = ptCutout[:,:,0:3] 
+                try:
+                    randimg = cv2.imread(randomimg[random.randint(0,8)])
+                except:
+                    randimg = cv2.imread(randomimg[0])
+                randimg = cv2.resize(randimg,(img.shape[1], img.shape[0]))
+                result = np.where(cAlpha==(0,0,0), randimg, front)
+                cv2.imwrite(f"output/{filename}.png", result)
 
+
+            
 test = labelCut(folder="imgs", randomImgFolder="random")
 test.randomBgFromLabelme()
