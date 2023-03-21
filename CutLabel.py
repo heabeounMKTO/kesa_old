@@ -96,5 +96,3 @@ class labelCut:
 
 
             
-test = labelCut(folder="imgs", randomImgFolder="random")
-test.randomBgFromLabelme()
