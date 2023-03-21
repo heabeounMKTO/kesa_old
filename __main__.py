@@ -9,7 +9,7 @@ def main():
     checkOutputFolder()
     test = labelCut("imgs", "random")
     test.randomBgFromLabelme()
-
+    #test.downloadRandomImages()
 
 def checkOutputFolder():
     folders = ["random", "output"]
@@ -17,7 +17,7 @@ def checkOutputFolder():
     for folder in folders:
         if not os.path.exists(folder):
             print("folder ", folder, " not found, creating..")
-            os.makedirs("folder")
+            os.makedirs(folder)
         else: 
             print("folder ", folder, " found, skipping creation..")
 

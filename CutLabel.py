@@ -6,6 +6,8 @@ import numpy as np
 import random
 import uuid
 import tqdm
+import DuckDuckGoImages as ddg
+from PIL import Image
 
 class labelCut:
     def __init__(self, folder,randomImgFolder,randomImageArray=None, jsonArray=None,imageArray=None):
@@ -26,10 +28,24 @@ class labelCut:
         
         return self.jsonArray
     
-    def downloadRandomImages():
-        
+    def downloadRandomImages(self):
+        images_to_download = 100
+        print(f"downloading 100 images")
+        ddg.download("random images", folder=self.randomImgFolder, max_urls=images_to_download)                 
+        print(f"checking downloaded images for corruption..")
+        self.verifyDownloadedImg()
 
 
+    def verifyDownloadedImg(self):
+        fmt = (".jpg",".jpeg",".png")  
+        for file in tqdm.tqdm(os.listdir(self.randomImgFolder)):
+            imgpath = os.path.join(os.getcwd() , os.path.join(self.randomImgFolder, file))
+            try:
+                img = Image.open(imgpath)
+                img.verify()
+            except(IOError, SyntaxError) as e:
+                print(f"found corrupted image{file}, deleting..")
+                os.remove(imgpath)
 
     def readImageFromLabelme(self):
         imagefiles = []
@@ -60,9 +76,13 @@ class labelCut:
         randomimg = []
         imgfmts = (".jpg", ".jpeg", ".png")
         for root, dirs, files in os.walk(self.randomImgFolder):
-            for file in files:
-                if file.endswith(imgfmts):
-                    randomimg.append(os.path.join(os.getcwd(), (self.randomImgFolder + "/" + file)))
+            if len(files) == 0:
+                print("no random images were found! , downloading some..")
+                self.downloadRandomImages()
+            else:
+                for file in files:
+                    if file.endswith(imgfmts):
+                        randomimg.append(os.path.join(os.getcwd(), (self.randomImgFolder + "/" + file)))
         print(f"found {len(randomimg)} images from random index")
         return randomimg
 
@@ -70,11 +90,12 @@ class labelCut:
     def randomBgFromLabelme(self):
         self.readImageFromLabelme() #load json
         randomimg = self.getRandomBackground()
-        count = 0
+        
         for index, label in enumerate(tqdm.tqdm(self.jsonArray)): 
             loadjson = json.load(open(label))
             filename = os.path.splitext(loadjson["imagePath"])[0]
             imgpath = os.path.join(self.folder, loadjson["imagePath"])
+            print("filename ", loadjson["imagePath"])
             img = cv2.imread(imgpath)
             blackbg = np.zeros((img.shape[0], img.shape[1], 3))
             shape = loadjson["shapes"]            
@@ -90,7 +111,7 @@ class labelCut:
                 ptCutout = cv2.merge([b,g,r,alpha], 4)
                 front = ptCutout[:,:,0:3] 
                 try:
-                    randimg = cv2.imread(randomimg[random.randint(0,8)])
+                    randimg = cv2.imread(randomimg[random.randint(0, len(randomimg))])
                 except:
                     randimg = cv2.imread(randomimg[0])
                 randimg = cv2.resize(randimg,(img.shape[1], img.shape[0]))
