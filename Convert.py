@@ -4,7 +4,6 @@ from CutLabel import labelCut
 
 loadJson = labelCut("imgs", "random").lookForJson()
 
-
 def getLabels():
     labels_list = []
     for jsonfile in loadJson:

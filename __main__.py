@@ -9,7 +9,6 @@ def main():
     checkOutputFolder()
     test = labelCut("imgs", "random")
     test.randomBgFromLabelme()
-    #test.downloadRandomImages()
 
 def checkOutputFolder():
     folders = ["random", "output"]
