@@ -4,3 +4,6 @@
 [submodule "labelme2yolo"]
 	path = labelme2yolo
 	url = https://github.com/heabeounMKTO/labelme2yolo.git
+[submodule "auto_label"]
+	path = auto_label
+	url = https://github.com/heabeounMKTO/auto_label.git
