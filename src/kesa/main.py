@@ -1,23 +1,40 @@
 import os
 from pathlib import Path
-from labelme2yolo.labelme2yolo import Labelme2Yolo as L2Y
-
-# from auto_label.autolabel import AutoLabel
+from kesa import Kesa
 import typer
 
+app = typer.Typer()
 
-def augmentImage(processingfolder: str, number_of_variations: int):
-    print(
-        f"creating augmentations in folder {processingfolder} , with {number_of_variations} of variations"
-    )
+KESA = Kesa()
 
 
-def main(operationmode: str, processingfolder: str):
-    operationmode.lower()
-    match operationmode:
-        case "augment":
-            augmentImage(processingfolder)
+@app.command()
+def convert2yolo(input: str, output: str):
+    """
+    convert labelme annotations to YOLO format
+
+    """
+    KESA.setMode("convert Labelme to Yolo")
+    KESA.kesaConvertLabelme2Yolo(input, output)
+
+
+@app.command()
+def autolabel(input: str, conf: float = 0.9, iou: float = 0.7):
+    """
+    auto-labels specified folder , in  labelme JSON format
+    """
+    KESA.setMode("autolabel")
+    KESA.kesaAutoLabel(input, conf, iou)
+
+
+@app.command()
+def end2end(input: str, output: str, conf: float = 0.9, iou=0.7):
+    """
+    end to end conversion of raw images to YOLO format annotations
+    """
+    KESA.setMode("end to end conversion")
+    KESA.kesaEnd2EndConversion(input, output, conf, iou)
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()

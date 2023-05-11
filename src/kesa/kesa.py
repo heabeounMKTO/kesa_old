@@ -8,16 +8,18 @@ import json
 
 
 class Kesa:
-    def __init__(self, mode):
+    def __init__(self) -> None:
+        return None
+
+    def setMode(self, mode):
         self.mode = mode
         print(f"kesa starting in {self.mode} mode")
 
     def kesaAutoLabel(self, input, confidence_thresh=0.9, iou_thresh=0.7):
-        label = AutoLabel(input,confidence_thresh,iou_thresh)
+        label = AutoLabel(input, confidence_thresh, iou_thresh)
         label.Label()
 
     def kesaConvertLabelme2Yolo(self, input, output):
-
         def kesaInitConversionFolder(processFolder, exportFolder):
             file_utils = fu(processFolder, exportFolder)
             file_utils.createExportFolder()
@@ -37,9 +39,4 @@ class Kesa:
         self, input, output, confidence_thresh=0.9, iou_thresh=0.7
     ):
         self.kesaAutoLabel(input, confidence_thresh, iou_thresh)
-        self.kesaConvertLabelme2Yolo(input,output)
-
-
-
-test = Kesa("augment")
-test.kesaAutoLabel("labeltest", 0.8, 0.7)
+        self.kesaConvertLabelme2Yolo(input, output)
