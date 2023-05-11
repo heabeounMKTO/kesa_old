@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from labelme2yolo.labelme2yolo import Labelme2Yolo as L2Y 
-from auto_label.autolabel import AutoLabel
+from labelme2yolo import Labelme2Yolo as L2Y 
+from autolabel import AutoLabel
 import typer
 
 
@@ -12,7 +12,7 @@ class Kesa:
     def kesaAutoLabel(self, autoLabelFolder, confidence_thresh, iou_thresh):
         label = AutoLabel(autoLabelFolder)
         print(label)
-
+        
 
 
 test = Kesa("augment")
