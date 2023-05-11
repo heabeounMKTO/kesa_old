@@ -14,7 +14,7 @@ from rich.table import Table
 
 # read global config file
 config = configparser.ConfigParser()
-config.read("auto-labelcfg.ini")
+config.read("configs/auto-labelcfg.ini")
 
 
 MODEL_PATH = os.path.join("detect-models", config["MODEL"]["MODEL_NAME"])
