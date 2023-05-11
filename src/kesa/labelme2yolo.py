@@ -27,8 +27,8 @@ class Labelme2Yolo:
         x2, y2 = xyxy[1]
         x_center = ((x1 + x2) / 2) / self.imageDimensions[0]
         y_center = ((y1 + y2) / 2) / self.imageDimensions[1]
-        _w = (math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)) / self.imageDimensions[0]
-        _h = (math.sqrt((x1 - x1) ** 2 + (y2 - y1) ** 2)) / self.imageDimensions[1]
+        _w = (x2 - x1) / self.imageDimensions[0]
+        _h = (y2 - y1) / self.imageDimensions[1]
         return x_center, y_center, _w, _h
 
     def getImageDimensions(self):
