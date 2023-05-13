@@ -19,20 +19,30 @@ class Kesa:
         label = AutoLabel(input, confidence_thresh, iou_thresh)
         label.Label()
 
-    def kesaConvertLabelme2Yolo(self, input, output):
-        def kesaInitConversionFolder(processFolder, exportFolder):
-            file_utils = fu(processFolder, exportFolder)
-            file_utils.createExportFolder()
-            file_utils.createLabelListFromFolder()
-            return file_utils
+    def kesaInitConversionFolder(self, processFolder, exportFolder):
+        file_utils = fu(processFolder, exportFolder)
+        file_utils.createExportFolder()
+        file_utils.createLabelListFromFolder()
+        return file_utils
 
-        conversion = kesaInitConversionFolder(input, output)
+    def kesaConvertLabelme2Yolo(self, input, output):
+        conversion = self.kesaInitConversionFolder(input, output)
         label_list = conversion.loadLabelList()
         for file in os.listdir(input):
             if file.endswith(".json"):
                 loadjson = json.load(open(os.path.join(input, file)))
                 convertLM = L2Y(loadjson, label_list, input)
                 convertLM.convert2YOLO()
+        conversion.moveAnnotationsToFolder()
+
+    def kesaConvertLabelme2Yolo_aug(self, input, output,time):
+        conversion = self.kesaInitConversionFolder(input, output)
+        label_list = conversion.loadLabelList()
+        for file in os.listdir(input):
+            if file.endswith(".json"):
+                loadjson = json.load(open(os.path.join(input, file)))
+                convertLM_aug = L2Y(loadjson, label_list, input)
+                convertLM_aug.convert2YOLO_aug(time)
         conversion.moveAnnotationsToFolder()
 
     def kesaEnd2EndConversion(

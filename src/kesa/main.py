@@ -36,5 +36,11 @@ def end2end(input: str, output: str, conf: float = 0.9, iou=0.7):
     KESA.kesaEnd2EndConversion(input, output, conf, iou)
 
 
+@app.command()
+def convert2yoloaug(input: str, output: str, time: int):
+    KESA.setMode(f"convert labelme to yolo with augmentations")
+    KESA.kesaConvertLabelme2Yolo_aug(input, output,time)
+
+
 if __name__ == "__main__":
     app()
