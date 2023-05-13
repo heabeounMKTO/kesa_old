@@ -174,3 +174,5 @@ cython_debug/
 test/*
 src/kesa/detect-models/*.pt
 detect-models/*.pt
+export/*
+labeltest/*

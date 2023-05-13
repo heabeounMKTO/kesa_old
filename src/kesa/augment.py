@@ -25,6 +25,10 @@ class augmentImage:
                 A.HorizontalFlip(),
                 A.VerticalFlip(),
                 A.RandomRain(),
+                A.ColorJitter(),
+                A.RandomBrightnessContrast(),
+                A.RandomShadow(),
+                A.CLAHE()
             ],
             bbox_params=A.BboxParams(
                 format="yolo", label_fields=["categeory_id"], min_area=0.0
@@ -33,16 +37,4 @@ class augmentImage:
         transformed = transform(image=image, bboxes=bboxes, categeory_id=categeory_id)
         one = [transformed["image"], transformed["bboxes"]]
         return one
-
-# testimage = "labeltest/tiger-1683001948246.jpeg"
-# labellist = ["1", "8"]
-# bbx = [
-#     (0.3569937369519833, 0.3190675017397356, 0.4154488517745303, 0.1885873347251218),
-#     (0.39718162839248433, 0.5549756437021572, 0.40396659707724425, 0.1579679888656924),
-# ]
-
-# testfolder = "labeltest"
-# test = augmentImage()
-# result = test.applyAugmentation(testimage,labellist, bbx)
-# print(result)
 

@@ -25,21 +25,6 @@ class Labelme2Yolo:
             self.yoloarr, os.path.join(self.processingFolder, self.filename)
         )
 
-    # def convert2YOLO_aug(self, times):
-    #     self.getLabelsFromJson4aug()
-    #     self.getFilename()
-    #     print(self.imagePath)
-    #     augmentimage = augmentImage(self.imagePath,self.yoloarr[1],self.labellist, times)
-    #     result = augmentimage.applyAugmentation()
-    #     for x in range(0, (len(results)-1)):
-    #         uni_fn = self.createUniqueFileName(self.imagePath)
-    #         results[x][0] = cv2.cvtColor(results[x][0], cv2.COLOR_BGR2RGB)
-    #         cv2.imwrite(uni_fn[1], results[x][0])
-    #         pair_coords = []
-    #         for classid,coords in zip(self.yoloarr[0],results[x][1]):
-    #             combined = [classid, coords[0],coords[1],coords[2],coords[3]]
-    #             pair_coords.append(combined)
-    #             self.writeYOLOtoFile(pair_coords, uni_fn[0])
     def convert2YOLO_aug(self,times):
         self.getLabelsFromJson4aug()
         self.getFilename()
@@ -134,22 +119,3 @@ class Labelme2Yolo:
                 f.write("\n")
 
 
-# def initFolders(input, output):
-#     file_utils = fu(input, output)
-#     file_utils.createExportFolder()
-#     file_utils.createLabelListFromFolder()
-#     return file_utils
-
-# def convertaugTest(input, output):
-#     conversion = initFolders(input, output)
-#     label_list = conversion.loadLabelList()
-#     for file in os.listdir(input):
-#         if file.endswith(".json"):
-#             loadjson = json.load(open(os.path.join(input, file)))
-#             convertLM = Labelme2Yolo(loadjson,label_list, input)
-#             convertLM.convert2YOLO_augtest(1)
-#     conversion.moveAnnotationsToFolder()
-# file = "labeltest"
-# convertaugTest(file, file)
-# test = Labelme2Yolo("labeltest/tiger-1683001948246.jpeg",["1","3"],"labeltest")
-# test.convert2YOLO_augtest()
