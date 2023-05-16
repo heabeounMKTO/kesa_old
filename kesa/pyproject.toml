@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "kesa"
+version = "0.1.0"
+description = ""
+authors = ["heabeoun <heabeoun69zin@gmail.com>"]
+readme = "README.md"
+packages =[{include = "kesa", from = "src"}]
+[tool.poetry.dependencies]
+python = "^3.10"
+matplotlib = ">=3.2.2"
+numpy = ">=1.18.5,<1.24.0"
+opencv-python = ">=4.1.1"
+pillow = ">=7.1.2"
+pyyaml = ">=5.3.1"
+requests = ">=2.23.0"
+scipy = ">=1.4.1"
+torch = ">=1.7.0,<1.12.0 || >1.12.0"
+torchvision = ">=0.8.1,<0.13.0 || >0.13.0"
+tqdm = ">=4.41.0"
+protobuf = "<4.21.3"
+tensorboard = ">=2.4.1"
+typer = "^0.9.0"
+pandas = ">=1.1.4"
+seaborn = ">=0.11.0"
+nvidia-cuda-cupti-cu11 = "^11.8.87"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
