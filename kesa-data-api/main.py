@@ -6,7 +6,8 @@ import base64
 import os
 import torch
 import configparser
-import label_img 
+import label_img
+
 from utils.torch_utils import select_device
 from models.common import DetectMultiBackend
 '''
@@ -22,22 +23,32 @@ def read_config():
         "iou_thresh": float(config["INFERENCE_CONFIG"]["IOU"]),
         "cuda_device": int(config["DEVICE_SETTINGS"]["CUDA_DEVICE"])
     }
-    return general_cfg
-general_config = read_config()
+    return config , general_cfg
+
+
+
+
+rawcfg , general_config = read_config()
 print(f"starting detect server with settings: \n { general_config }")
 cudaselectdevice = select_device(general_config["cuda_device"])
 app = Flask(__name__)
 
-
-
 @app.route('/')
 def ayylmao():
     checkcuda = torch.cuda.is_available()
-    return render_template('index.html', cuda = checkcuda)
+    yeah = dict(rawcfg.items('MODEL'))
+    return render_template('index.html', cuda = checkcuda, models = list(yeah.keys()))
 
-# @app.route("/modelinfo/<modelname>", methods=["POST"])
-# def get_model_info(modelname):
+@app.route('/modelinfo')
+def get_all_models():
+    yeah = dict(rawcfg.items('MODEL'))
+    return jsonify({'available_models':list(yeah.keys())}) 
 
+@app.route("/modelinfo/<modelname>", methods=["GET"])
+def get_model_info(modelname):
+    model2load = os.path.join("label_models", general_config[str(modelname)])
+    loadModel = DetectMultiBackend(model2load, cudaselectdevice, dnn=False, data=None, fp16=True)
+    return jsonify({'status':'success', 'model_names':loadModel.names, 'model_stride':loadModel.stride, 'model_pt':loadModel.pt})
 
 @app.route("/autolabel", methods=["POST"])
 def labelshit():

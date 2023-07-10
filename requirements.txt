@@ -1,0 +1,18 @@
+# GQ top 10 yolov7 essentials
+# penis
+matplotlib
+numpy>=1.18.5,<1.24.0 
+# note: numpy 1.24.0(+?) doesnt work with yolov7 for some reason, couldn't remember what exactly it was but all i remember is v1.24.0 of numpy fucks with yolov7  
+opencv-python>=4.1.1
+Pillow>=7.1.2
+PyYAML>=5.3.1
+requests>=2.23.0
+scipy>=1.4.1
+torch --index-url https://download.pytorch.org/whl/cu118
+torchvision --index-url https://download.pytorch.org/whl/cu118
+tqdm>=4.41.0
+protobuf<4.21.3
+flask
+waitress
+pandas
+seaborn
