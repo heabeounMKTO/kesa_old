@@ -5,28 +5,17 @@ import torch
 import torch.backends.cudnn as cudnn
 
 # from models.common import DetectMultiBackend
-from utils.dataloaders import IMG_FORMATS, VID_FORMATS, LoadImages, LoadStreams
 from utils.general import (
     LOGGER,
-    check_file,
-    check_img_size,
-    check_imshow,
-    check_requirements,
-    colorstr,
-    cv2,
-    increment_path,
     non_max_suppression,
-    print_args,
     scale_coords,
-    strip_optimizer,
-    xyxy2xywh,
 )
 from utils.augmentations import letterbox
-from utils.plots import Annotator, colors, save_one_box
-from utils.torch_utils import select_device, smart_inference_mode, time_sync
-import json
+from utils.torch_utils import select_device 
 import os
 import base64
+
+
 
 
 class imageDetect:
@@ -37,20 +26,11 @@ class imageDetect:
         self.conf = conf
 
     def preProcess(self, im0s, target_size=640):
-        self.base64image = self.convertImg2b64(im0s)
-        self.filename = os.path.basename(im0s)
-        im0s = cv2.imread(im0s)
-        self.source = im0s
         im = letterbox(im0s, target_size, stride=32, auto=True)
         im = np.array(im[0], dtype=np.uint8)
         im = im.transpose((2, 0, 1))[::-1]
         im = np.ascontiguousarray(im)
         return im
-
-    def convertImg2b64(self, imgpath):
-        with open(imgpath, "rb") as img_file:
-            imgstring = base64.b64encode(img_file.read())
-        return imgstring
 
     def detect(
         self, half=False, imgsz=(640, 640), iou_thres=0.7, max_det=100, classes=None
@@ -106,8 +86,6 @@ class imageDetect:
                 "version": "5.1.1",
                 "flags": {},
                 "shapes": shapes,
-                "imagePath": self.filename,
-                "imageData": self.base64image.decode("utf-8"),
                 "imageHeight": self.source.shape[0],
                 "imageWidth": self.source.shape[1],
             }

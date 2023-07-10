@@ -35,10 +35,6 @@ def ayylmao():
     checkcuda = torch.cuda.is_available()
     return render_template('index.html', cuda = checkcuda)
 
-# @app.route("/modelinfo/<modelname>", methods=["POST"])
-# def get_model_info(modelname):
-
-
 @app.route("/autolabel", methods=["POST"])
 def labelshit():
     r = request
@@ -60,4 +56,5 @@ def labelshit():
 
 
 
-app.run(port=6969, debug=True)
+def create_app():
+    return app
