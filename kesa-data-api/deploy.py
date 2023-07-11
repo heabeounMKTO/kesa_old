@@ -1,14 +1,15 @@
-from flask import Flask, request, jsonify, render_template
-import cv2
-import json
-import numpy as np
 import base64
-import os
-import torch
 import configparser
+import json
+import os
+
+import cv2
 import label_img
-from utils.torch_utils import select_device
+import numpy as np
+import torch
+from flask import Flask, jsonify, render_template, request
 from models.common import DetectMultiBackend
+from utils.torch_utils import select_device
 
 """
 reads config file 

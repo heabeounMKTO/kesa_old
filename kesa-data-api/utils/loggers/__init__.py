@@ -10,7 +10,6 @@ from pathlib import Path
 import pkg_resources as pkg
 import torch
 from torch.utils.tensorboard import SummaryWriter
-
 from utils.general import colorstr, cv2
 from utils.loggers.clearml.clearml_utils import ClearmlLogger
 from utils.loggers.wandb.wandb_utils import WandbLogger

@@ -1,18 +1,18 @@
-from flask import Flask, request, jsonify, render_template
-import cv2
-import json
-import numpy as np
-import base64
-import os
-import torch
-import configparser
-import label_img
 import ast
-import convert.labelme2yolo
-from art import *
-from utils.torch_utils import select_device
-from models.common import DetectMultiBackend
+import base64
+import configparser
+import json
+import os
 
+import convert.labelme2yolo
+import cv2
+import label_img
+import numpy as np
+import torch
+from art import *
+from flask import Flask, jsonify, render_template, request
+from models.common import DetectMultiBackend
+from utils.torch_utils import select_device
 
 ## the important part
 print("---------------------------------------------------------------")
@@ -45,8 +45,11 @@ def read_config():
 
 rawcfg, general_config = read_config()
 print_dict( "\033[1m Starting Kesa with Configurations: \033[0m ", general_config)
-# print(f"\033[1m starting kesa with settings: \n { general_config }\033[0m")
+
+
 cudaselectdevice = select_device(general_config["cuda_device"])
+
+
 app = Flask(__name__)
 
 

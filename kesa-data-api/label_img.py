@@ -1,19 +1,15 @@
+import base64
+import os
 from pathlib import Path
-import numpy as np
+
 import cv2
+import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
-
-# from models.common import DetectMultiBackend
-from utils.general import (
-    LOGGER,
-    non_max_suppression,
-    scale_coords,
-)
 from utils.augmentations import letterbox
+# from models.common import DetectMultiBackend
+from utils.general import LOGGER, non_max_suppression, scale_coords
 from utils.torch_utils import select_device
-import os
-import base64
 
 
 class imageDetect:

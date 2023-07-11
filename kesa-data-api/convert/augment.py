@@ -1,9 +1,10 @@
-import albumentations as A
-import cv2
-import uuid
 import json
 import os
+import uuid
 from pathlib import Path
+
+import albumentations as A
+import cv2
 import numpy as np
 
 
