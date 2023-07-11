@@ -18,3 +18,4 @@ pandas
 albumentations
 seaborn
 art
+rich

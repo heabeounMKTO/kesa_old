@@ -1,6 +1,5 @@
 import albumentations
-import cv2 
-
+import cv2
 
 
 class Labelme2Yolo:

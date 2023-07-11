@@ -11,24 +11,37 @@ import numpy as np
 import torch
 from art import *
 from flask import Flask, jsonify, render_template, request
+from kesa_print import color, kesaError, kesaLog, kesaPrintDict
+from kesa_utils import ModelUtils
 from models.common import DetectMultiBackend
 from utils.torch_utils import select_device
 
 ## the important part
-print("---------------------------------------------------------------")
+print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
 print(text2art("processing"))
-print("---------------------------------------------------------------")
-print(text2art("kesa", font="isomertic1"))
-print("---------------------------------------------------------------")
+print("===========================|**|===================================")
+print("\033[1m HEA⚡BEOUN's \033[0m")
+print(text2art("kesa", font="isometric4"))
+print("===========================|**|===================================")
 print(text2art("conversion"))
-print("---------------------------------------------------------------")
+print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
+###############################
+
 """
 reads config file 
 """
-def print_dict(notify_string ,input_dict):
-    print(notify_string)
-    for items in input_dict.items():
-        print(f"\033[1mL🍑GGER: {items[0]} : {items[1]} \033[0m ")
+# utils
+
+
+def getdevice():
+    try:
+        cudaselectdevice = select_device(general_config["cuda_device"])
+        kesaLog(f'GPU index {general_config["cuda_device"]} ,selected')
+    except:
+        kesaError("Failed in getting GPU, falling back to CPU...")
+        cudaselectdevice = select_device("cpu")
+    return cudaselectdevice
+
 
 def read_config():
     config = configparser.ConfigParser()
@@ -43,12 +56,22 @@ def read_config():
     return config, general_cfg
 
 
+##
+
 rawcfg, general_config = read_config()
-print_dict( "\033[1m Starting Kesa with Configurations: \033[0m ", general_config)
 
 
-cudaselectdevice = select_device(general_config["cuda_device"])
+print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
+kesaPrintDict(
+    "\033[1m Starting Kesa server with configurations: \033[0m ", general_config
+)
+print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
+kesaLog("Fetching model info..")
+MODEL_INFO_DICT = ModelUtils().getAllModelInfoFromConfig(rawcfg)
+kesaLog("Model info loaded!")
 
+# select cuda device
+cudaselectdevice = getdevice()
 
 app = Flask(__name__)
 
@@ -71,8 +94,7 @@ def convert2yolo():
 
 @app.route("/modelinfo")
 def get_all_models():
-    yeah = dict(rawcfg.items("MODEL"))
-    return jsonify({"available_models": list(yeah.keys())})
+    return jsonify({"available_models": f"{list(MODEL_INFO_DICT.keys())}"})
 
 
 @app.route("/modelinfo/<modelname>", methods=["GET"])

@@ -1,6 +1,6 @@
-from kesa_utils import ModelUtils
 import configparser
 
+from kesa_utils import ModelUtils
 
 config = configparser.ConfigParser()
 config.read("configs/auto-labelcfg.ini")
