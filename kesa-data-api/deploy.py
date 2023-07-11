@@ -68,6 +68,7 @@ kesaPrintDict(
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
 kesaLog("Fetching model info..")
 MODEL_INFO_DICT = ModelUtils().getAllModelInfoFromConfig(rawcfg)
+print(MODEL_INFO_DICT)
 kesaLog("Model info loaded!")
 
 # select cuda device
