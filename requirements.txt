@@ -15,4 +15,6 @@ protobuf<4.21.3
 flask
 waitress
 pandas
+albumentations
 seaborn
+art

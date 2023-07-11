@@ -11,11 +11,9 @@ from utils.general import (
     scale_coords,
 )
 from utils.augmentations import letterbox
-from utils.torch_utils import select_device 
+from utils.torch_utils import select_device
 import os
 import base64
-
-
 
 
 class imageDetect:
