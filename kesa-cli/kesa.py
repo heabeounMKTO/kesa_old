@@ -1,10 +1,13 @@
 import requests
 import configparser
-import os
 from urllib.parse import urljoin, urlparse
 import json
+from functools import reduce 
+import argparse
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--config', type=str)
 
 
 def read_config():
@@ -17,12 +20,13 @@ def read_config():
 
 _penis , bussy = read_config()
 
-def getAddrFromCfg():
-    return bussy.get("address") 
 
 def getAllModels():
-    kdouyayeas = requests.get('http://localhost:6969/modelinfo')
-    print(kdouyayeas.text)
+    fulladdr = urljoin(bussy.get("address"), '/modelinfo')
+    kdouyayeas = requests.get(fulladdr)
+    result = json.loads(kdouyayeas.text)
+    print(result["available_models"])
+
 getAllModels()
     
 
