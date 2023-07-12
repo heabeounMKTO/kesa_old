@@ -11,6 +11,9 @@ class FileUtils:
         pass
 
     def validateFileExists(self, file_path):
+        '''
+        validates if a files exist
+        '''
         kesaLog(f"checking if file {file_path} exists")
         file_path = os.path.join(os.getcwd(), file_path) 
         if pathlib.Path(file_path).is_file():
@@ -19,7 +22,8 @@ class FileUtils:
         else:
             kesaError(f"file: {file_path} NOT FOUND !?, please check & re-check")
             return False 
-    
+     
+     
 
 
 class ModelUtils:

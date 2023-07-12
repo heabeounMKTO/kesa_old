@@ -9,14 +9,14 @@ import cv2
 import label_img
 import numpy as np
 import torch
-from art import *
+from art import text2art 
 from flask import Flask, jsonify, render_template, request
 from kesa_print import color, kesaError, kesaLog, kesaPrintDict
-from kesa_utils import ModelUtils
+from kesa_utils import ModelUtils, CfgUtils
 from models.common import DetectMultiBackend
 from utils.torch_utils import select_device
 
-## the important part
+## the important part, the people must know
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
 print(text2art("processing"))
 print("===========================|**|===================================")
@@ -31,8 +31,6 @@ print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ
 reads config file 
 """
 # utils
-
-
 def getdevice():
     try:
         cudaselectdevice = select_device(general_config["cuda_device"])
@@ -41,24 +39,9 @@ def getdevice():
         kesaError("Failed in getting GPU, falling back to CPU...")
         cudaselectdevice = select_device("cpu")
     return cudaselectdevice
-
-
-def read_config():
-    config = configparser.ConfigParser()
-    config.read("configs/auto-labelcfg.ini")
-    general_cfg = {
-        "longhu": config["MODEL"]["LONGHU"],
-        "longhu-back": config["MODEL"]["LONGHU_BACK"],
-        "confidence_thresh": float(config["INFERENCE_CONFIG"]["CONFIDENCE"]),
-        "iou_thresh": float(config["INFERENCE_CONFIG"]["IOU"]),
-        "cuda_device": int(config["DEVICE_SETTINGS"]["CUDA_DEVICE"]),
-    }
-    return config, general_cfg
-
-
 ##
 
-rawcfg, general_config = read_config()
+rawcfg, general_config = CfgUtils().read_config()
 
 
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
@@ -68,7 +51,6 @@ kesaPrintDict(
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
 kesaLog("Fetching model info..")
 MODEL_INFO_DICT = ModelUtils().getAllModelInfoFromConfig(rawcfg)
-print(MODEL_INFO_DICT)
 kesaLog("Model info loaded!")
 
 # select cuda device
@@ -100,16 +82,10 @@ def get_all_models():
 
 @app.route("/modelinfo/<modelname>", methods=["GET"])
 def get_model_info(modelname):
-    model2load = os.path.join("label_models", general_config[str(modelname)])
-    loadModel = DetectMultiBackend(
-        model2load, cudaselectdevice, dnn=False, data=None, fp16=True
-    )
     return jsonify(
         {
             "status": "success",
-            "class_names": loadModel.names,
-            "model_stride": loadModel.stride,
-            "isit_pt": loadModel.pt,
+            "class_names": MODEL_INFO_DICT[modelname],
         }
     )
 
