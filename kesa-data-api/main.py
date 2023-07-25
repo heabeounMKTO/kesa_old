@@ -70,12 +70,15 @@ def ayylmao():
 
 @app.route("/convertLabel/yolo/<modelname>", methods=["POST"])
 def convert2yolo(modelname):
-    r = request
-    label_data = r.json["labelme_json"]
-    print(type(label_data))
-    convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
-    return jsonify({"response":convert.getLabelsFromJson()})
 
+    r = request
+    if int(r.json["augment"]) == 0: 
+        label_data = r.json["labelme_json"]
+        print(type(label_data))
+        convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
+        return jsonify({"response":convert.getLabelsFromJson()})
+    else:
+        return jsonify({"response":"sorry , augmentations is not yet available!"})
 
 @app.route("/modelinfo")
 def get_all_models():

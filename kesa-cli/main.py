@@ -50,7 +50,9 @@ def convertsingle(json_path: str, model_name: str, target_format: str = "yolo", 
     fullurl = urljoin(general_cfg["address"]
                       ,f'convertLabel/{target_format}/{model_name}')
     r = requests.post(fullurl, 
-                      json={"labelme_json":jsonFile, "model_name":model_name, "augment":augment})        
+                      json={"labelme_json":jsonFile, 
+                            "model_name":model_name, 
+                            "augment":f"{augment}"})        
     
     print(r.text)
 
