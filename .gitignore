@@ -176,3 +176,4 @@ src/kesa/detect-models/*.pt
 detect-models/*.pt
 export/*
 labeltest/*
+kesa-cli/testfolder/*

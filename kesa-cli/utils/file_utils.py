@@ -5,8 +5,48 @@ import tqdm
 import shutil
 import math
 import yaml
+import uuid
+
 
 ext = [".jpeg", ".jpg", ".png"]
+class kesaFileCliUtils:
+    def __init__(self) -> None:
+        pass
+    
+    def loadLabels(self, labels):
+        self.LabelList = labels
+    
+
+    def getImageExtension(self, jsonFile):
+        """
+        TODO 
+        """
+        jsonFile = json.load(open(jsonFile))
+        return os.path.splitext(jsonFile["imagePath"])
+
+    def getAllJsonFromFolder(self, processingFolder):
+        json_list = []
+        for file in processingFolder: 
+            if file.endswith(".json"):
+                json_list.append(file)
+        return json_list
+     
+    def getImagePathandBase64FromJson(self, jsonFile):
+        """
+        just use jsonFile["imagePath"] , for
+        most thigns
+        """
+        jsonFile = json.load(open(jsonFile))
+        return jsonFile["imagePath"], jsonFile["imageData"]
+    
+
+    def createUniqueFilename(self, inputFilename):
+        unique_id = str(uuid.uuid4().hex)
+        file = os.path.splitext(inputFilename)
+        final_txt = file[0] + unique_id + ".txt"
+        final_img = file[0] + unique_id + ".jpg"
+        return [final_txt, final_img]
+
 
 class fileUtils:
     def __init__(self, processingFolder, exportFolder):
@@ -24,8 +64,13 @@ class fileUtils:
             data_yaml = yaml.safe_load(file)
             labellist = data_yaml["names"]
             return labellist
+    
+    
 
     def createLabelListFromFolder(self):
+        """
+        seldom used, will be replaced with just a label request from `kesa-data-api`
+        """
         jsonlist = []
         for roots, dirs, files in os.walk(self.processingFolder):
             for file in files:

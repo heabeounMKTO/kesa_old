@@ -4,12 +4,13 @@ import json
 
 class Labelme2Yolo:
     def __init__(self, json_file, labellist):
-        self.jsonFile = json.loads(json_file)
+        self.jsonFile = json.dumps(json_file, indent=4)
+        self.jsonFile = json.loads(self.jsonFile)
         self.labellist = labellist
    
     def getImageDimensions(self):
         imageWidth = self.jsonFile["imageWidth"]
-        imageHeight = self.jsonFile["imageHight"]
+        imageHeight = self.jsonFile["imageHeight"]
         self.imageDimensions = [imageWidth, imageHeight]
         return self.imageDimensions
 

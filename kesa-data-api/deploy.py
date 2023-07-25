@@ -66,12 +66,11 @@ def ayylmao():
     return render_template("index.html", cuda=checkcuda, models=list(yeah.keys()))
 
 
-@app.route("/convertLabel", methods=["POST"])
+@app.route("/convertLabel/yolo", methods=["POST"])
 def convert2yolo():
     r = request
-    label_data = str(r.json["labeljson"])
-    for annotations in ast.literal_eval(label_data)["shapes"]:
-        print(annotations["points"])
+    label_data = r.json["labelme_json"]
+    print(label_data)
     return jsonify({"ayy": "lmao"})
 
 
@@ -114,6 +113,7 @@ def labelshit():
     label_result = detectPt.detect()
 
     return jsonify({"status": "success", "labelmejson": f"{label_result}"})
+
 
 def create_app():
     return app
