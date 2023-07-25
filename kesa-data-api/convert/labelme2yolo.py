@@ -3,7 +3,7 @@ import cv2
 import json
 from convert.augment import augmentImage as Aug
 import os
-
+import uuid
 
 
 class Labelme2Yolo:
@@ -28,10 +28,20 @@ class Labelme2Yolo:
         return x_center, y_center, _w, _h
     
     def convert2Yolo(self):
-        self.getLabelsFromJson()
+        
         filename = os.path.splitext(self.jsonFile["imagePath"])[0]
-        return filename
-     
+        unique_n = self.createUniqueFileName(filename) 
+        
+        return unique_n, self.getLabelsFromJson()
+
+    def createUniqueFileName(self, inputFilename):
+        unique_id = str(uuid.uuid4().hex)
+        file = os.path.splitext(inputFilename)
+        unique_name = file[0] + unique_id 
+        
+        return unique_name 
+
+
     def getLabelsFromJson(self):
         self.yoloarr = []
         self.getImageDimensions()

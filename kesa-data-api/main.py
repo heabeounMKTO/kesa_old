@@ -74,7 +74,10 @@ def convert2yolo(modelname):
     label_data = r.json["labelme_json"]
     convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
     if int(r.json["augment"]) == 0: 
-        return jsonify({"response":convert.convert2Yolo()})
+        unique_name,labels = convert.convert2Yolo()
+        return jsonify({"unique_name":unique_name,
+                        "labels":labels})
+
     else:
         return jsonify({"response":"sorry , augmentations is not yet available!"})
 
