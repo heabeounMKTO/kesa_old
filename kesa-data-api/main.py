@@ -15,6 +15,9 @@ from kesa_print import color, kesaError, kesaLog, kesaPrintDict
 from kesa_utils import ModelUtils, CfgUtils
 from models.common import DetectMultiBackend
 from utils.torch_utils import select_device
+from convert.labelme2yolo import Labelme2Yolo
+
+
 
 ## the important part, the people must know
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
@@ -70,11 +73,11 @@ def ayylmao():
 def convert2yolo():
     r = request
     label_data = str(r.json["labeljson"])
-    for annotations in ast.literal_eval(label_data)["shapes"]:
-        print(annotations["points"])
-    return jsonify({"ayy": "lmao"})
-
-
+    label_list = MODEL_INFO_DICT.get(r.json["type"])
+    convert_labelme = Labelme2Yolo(label_data, label_list)
+    results = convert_labelme.getLabelsFromJson()
+    return jsonify({"a":results})
+    
 @app.route("/modelinfo")
 def get_all_models():
     return jsonify({"available_models": f"{list(MODEL_INFO_DICT.keys())}"})

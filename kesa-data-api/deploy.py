@@ -115,6 +115,5 @@ def labelshit():
 
     return jsonify({"status": "success", "labelmejson": f"{label_result}"})
 
-
 def create_app():
     return app

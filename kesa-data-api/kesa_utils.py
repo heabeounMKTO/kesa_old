@@ -39,7 +39,6 @@ class ModelUtils:
             modelInfoDict = {}
             for model in models_dict:
                 model_filename = os.path.join("label_models", models_dict[model])
-                
 
                 #check if the mf file even exist before try lodaing LMAO
                 if FileUtils().validateFileExists(model_filename):
@@ -65,6 +64,9 @@ class CfgUtils:
         config = configparser.ConfigParser()
         try:
             config.read("configs/auto-labelcfg.ini")        
+            #TODO update print config to dynamically include all models,
+            # currently it works but doesnt show up on server console so it's not
+            # super cool (yEt)
             general_cfg = {
             "longhu": config["MODEL"]["LONGHU"],
             "longhu-back": config["MODEL"]["LONGHU_BACK"],
