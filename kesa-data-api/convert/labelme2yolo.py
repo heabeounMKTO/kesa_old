@@ -1,6 +1,10 @@
 import albumentations
 import cv2
 import json
+from convert.augment import augmentImage as Aug
+import os
+
+
 
 class Labelme2Yolo:
     def __init__(self, json_file, labellist):
@@ -22,7 +26,12 @@ class Labelme2Yolo:
         _w = (x2 - x1) / self.imageDimensions[0]
         _h = (y2 - y1) / self.imageDimensions[1]
         return x_center, y_center, _w, _h
-
+    
+    def convert2Yolo(self):
+        self.getLabelsFromJson()
+        filename = os.path.splitext(self.jsonFile["imagePath"])[0]
+        return filename
+     
     def getLabelsFromJson(self):
         self.yoloarr = []
         self.getImageDimensions()
@@ -32,4 +41,20 @@ class Labelme2Yolo:
             x, y, w, h = self.xyxy2xywh((x1y1, x2y2))
             labelclass = self.labellist.index(labels["label"])
             self.yoloarr.append([labelclass, x, y, w, h])
+        return self.yoloarr
+
+    def getLabelsFromJson_aug(self):
+        coords_bundle = []
+        class_bundle = []
+        self.getImageDimensions()
+        for labels in self.jsonFile["shapes"]:
+            x1y1 = labels["points"][0]
+            x2y2 = labels["points"][1]
+            x, y, w, h = self.xyxy2xywh((x1y1, x2y2))
+            x, y, w, h = abs(x), abs(y), abs(w), abs(h) 
+            # for some reason wome of the coords are negative! 
+            # i will look into this later
+            coords_bundle.append((x, y, w, h))
+            class_bundle.append(str(self.labellist.index(labels["label"])))
+        self.yoloarr = [class_bundle, coords_bundle]
         return self.yoloarr

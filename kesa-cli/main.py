@@ -49,11 +49,21 @@ def convertsingle(json_path: str, model_name: str, target_format: str = "yolo", 
     jsonFile = json.load(open(json_path)) 
     fullurl = urljoin(general_cfg["address"]
                       ,f'convertLabel/{target_format}/{model_name}')
-    r = requests.post(fullurl, 
-                      json={"labelme_json":jsonFile, 
-                            "model_name":model_name, 
-                            "augment":f"{augment}"})        
-    
+    if augment == 0:
+        modJson = jsonFile.copy()
+        del modJson["imageData"] 
+        # makes copy and deletes 
+        # image data b64 for bandwidth savings
+        # don't need image modifications 
+        r = requests.post(fullurl, 
+                          json={"labelme_json":modJson, 
+                                "model_name":model_name, 
+                                "augment":f"{augment}"})        
+    else:
+        r = requests.post(fullurl, 
+                          json={"labelme_json":jsonFile, 
+                                "model_name":model_name, 
+                                "augment":f"{augment}"})        
     print(r.text)
 
 
