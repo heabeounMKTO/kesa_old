@@ -177,4 +177,4 @@ detect-models/*.pt
 export/*
 labeltest/*
 kesa-cli/testfolder/*
-.VSCodeCounter/*
+.VSCodeCounter/
