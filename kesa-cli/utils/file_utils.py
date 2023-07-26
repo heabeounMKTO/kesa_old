@@ -6,60 +6,72 @@ import shutil
 import math
 import yaml
 import uuid
-
+import cv2 
 
 ext = [".jpeg", ".jpg", ".png"]
-class kesaFileCliUtils:
+
+class KesaFileCli:
     def __init__(self) -> None:
-        pass
+       pass
     
-    def loadLabels(self, labels):
-        self.LabelList = labels
+    def setLabelList(self, LabelList):
+       self.LabelList = LabelList 
     
-
-    def getImageExtension(self, jsonFile):
-        """
-        TODO 
-        """
-        jsonFile = json.load(open(jsonFile))
-        return os.path.splitext(jsonFile["imagePath"])
-
-    def getAllJsonFromFolder(self, processingFolder):
-        json_list = []
-        for file in processingFolder: 
-            if file.endswith(".json"):
-                json_list.append(file)
-        return json_list
-     
-    def getImagePathandBase64FromJson(self, jsonFile):
-        """
-        just use jsonFile["imagePath"] , for
-        most thigns
-        """
-        jsonFile = json.load(open(jsonFile))
-        return jsonFile["imagePath"], jsonFile["imageData"]
-    
-
-    def createUniqueFilename(self, inputFilename):
-        unique_id = str(uuid.uuid4().hex)
-        file = os.path.splitext(inputFilename)
-        final_txt = file[0] + unique_id + ".txt"
-        final_img = file[0] + unique_id + ".jpg"
-        return [final_txt, final_img]
-
-
-class fileUtils:
-    def __init__(self, processingFolder, exportFolder):
+    def setProcessingFolder(self, processingFolder):
         self.processingFolder = processingFolder
+    
+    def setExportFolder(self, exportFolder):
         self.exportFolder = exportFolder
-
+     
     def getProcessingFolder(self):
         return self.processingFolder
 
     def getExportFolder(self):
         return self.exportFolder
 
-    def loadLabelList(self):
+    def createExportFolder(self, processingFolder, exportFolder):
+        self.setProcessingFolder(processingFolder)
+        self.setExportFolder(exportFolder)
+        # THIS IS FOR EASY CHANGING OF NAMES OK
+        images = "images"
+        labels = "labels"
+        print(f"creating test folder {self.exportFolder}")
+        try:
+            os.makedirs(os.path.join(f"{self.exportFolder}/test", images))
+            os.makedirs(os.path.join(f"{self.exportFolder}/test", labels))
+        except FileExistsError:
+            print("folder already exists!")
+        print(f"creating train folder at {self.exportFolder}")
+        try:
+            os.makedirs(os.path.join(f"{self.exportFolder}/train", images))
+            os.makedirs(os.path.join(f"{self.exportFolder}/train", labels))
+        except FileExistsError:
+            print("folder already exists!")
+        print(f"creating valid folder {self.exportFolder}")
+        try:
+            os.makedirs(os.path.join(f"{self.exportFolder}/valid", images))
+            os.makedirs(os.path.join(f"{self.exportFolder}/valid", labels))
+        except FileExistsError:
+            print("folder already exists!")
+    
+    def createLabelList(self):
+        """
+        creates data.yaml file for folder
+        """
+        jsonlist = self.LabelList 
+        with open(os.path.join(self.exportFolder, "data.yaml"), "w") as file:
+            ayylmao = dict(
+                names=jsonlist,
+                nc=len(jsonlist),
+                train=f"/{self.exportFolder}/train/images",
+                val=f"/{self.exportFolder}/valid/images",
+                test=f"/{self.exportFolder}/test/images",
+            )
+        
+        
+        
+    def loadLabelList(self, exportFolder):
+        exportFolder = self.exportFolder
         with open(os.path.join(self.exportFolder, "data.yaml")) as file:
             data_yaml = yaml.safe_load(file)
             labellist = data_yaml["names"]
@@ -90,27 +102,6 @@ class fileUtils:
             )
             yaml.dump(ayylmao, file, default_flow_style=None)
 
-    def createExportFolder(self):
-        images = "images"
-        labels = "labels"
-        print(f"creating test folder {self.exportFolder}")
-        try:
-            os.makedirs(os.path.join(f"{self.exportFolder}/test", images))
-            os.makedirs(os.path.join(f"{self.exportFolder}/test", labels))
-        except FileExistsError:
-            print("folder already exists!")
-        print(f"creating train folder at {self.exportFolder}")
-        try:
-            os.makedirs(os.path.join(f"{self.exportFolder}/train", images))
-            os.makedirs(os.path.join(f"{self.exportFolder}/train", labels))
-        except FileExistsError:
-            print("folder already exists!")
-        print(f"creating valid folder {self.exportFolder}")
-        try:
-            os.makedirs(os.path.join(f"{self.exportFolder}/valid", images))
-            os.makedirs(os.path.join(f"{self.exportFolder}/valid", labels))
-        except FileExistsError:
-            print("folder already exists!")
 
     def moveToFolder(self, jsonList, destinationFolder):
         def moveLabelandImage(annotation, foldername):
@@ -180,3 +171,29 @@ class fileUtils:
         self.moveToFolder(jsonfiles, "train")
         self.moveToFolder(jsonfiles, "valid")
         self.moveToFolder(jsonfiles, "test")
+    
+    def writeYoloAnnotationsToTXT(self, 
+                             file_name ,
+                             annotation_list,
+                             ):
+        """
+        writes annotation list to txt file
+        Args:
+            file_name (_type_): file name NO EXTENSIONS
+            annotation_list (_type_): the converted label list 
+        """
+        with open(file_name, "w") as f:
+            for annotations in annotation_list:
+                f.write(str(annotations[0]))
+                f.write(" ")
+                f.write(str(annotations[1]))
+                f.write(" ")
+                f.write(str(annotations[2]))
+                f.write(" ")
+                f.write(str(annotations[3]))
+                f.write(" ")
+                f.write(str(annotations[4]))
+                f.write("\n")
+
+
+         

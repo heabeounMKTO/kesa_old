@@ -15,6 +15,8 @@ from kesa_print import color, kesaError, kesaLog, kesaPrintDict
 from kesa_utils import ModelUtils, CfgUtils
 from models.common import DetectMultiBackend
 from utils.torch_utils import select_device
+from convert.labelme2yolo import Labelme2Yolo as L2Y
+
 
 ## the important part, the people must know
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
@@ -65,14 +67,24 @@ def ayylmao():
     yeah = dict(rawcfg.items("MODEL"))
     return render_template("index.html", cuda=checkcuda, models=list(yeah.keys()))
 
-
-@app.route("/convertLabel/yolo", methods=["POST"])
-def convert2yolo():
+@app.route("/convertLabel/yolo/<modelname>", methods=["POST"])
+def convert2yolo(modelname):
     r = request
     label_data = r.json["labelme_json"]
-    print(label_data)
-    return jsonify({"ayy": "lmao"})
-
+    convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
+    if int(r.json["augment"]) <= 0: 
+        unique_name,labels = convert.convert2Yolo()
+        return jsonify({"unique_name":unique_name,
+                        "labels":labels})
+    else:
+        """
+        sends back augmented images in base64 format 
+        according to the times mentioned, b64 is encoded as string
+        ples read as bytes
+        """
+        label_aug = convert.convert2Yolo_aug(r.json["labelme_json"]["imageData"],
+                                                            int(r.json["augment"]))
+        return jsonify({"label_multi":label_aug})
 
 @app.route("/modelinfo")
 def get_all_models():

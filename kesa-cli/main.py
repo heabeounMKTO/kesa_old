@@ -5,11 +5,12 @@ import json
 import requests
 from utils.config import CfgUtils
 from urllib.parse import urljoin
-from utils.convert import Labelme2Yolo as L2Y
+from utils.file_utils import KesaFileCli as KFC
+from kesa import Kesa
 
 app = typer.Typer()
+from pathlib import Path
 rawcfg, general_cfg = CfgUtils().read_config()
-
                 
 
 @app.command()
@@ -39,33 +40,41 @@ def getModelInfo(model_name: str):
    resJson = json.loads(r.text)["class_names"]
    print(resJson)
    return resJson
-
 @app.command()
-def convertsingle(json_path: str, model_name: str, target_format: str = "yolo", augment: int = 0):
+def convertLabel(input: str, 
+                 model_name: str, 
+                 target_format: str = "yolo",
+                 augment: int = 0,
+                 save_folder = "_kesatemp",
+                 export_folder = "export" 
+                ):
     """
-    convert single labelme json file 
-    to yolo .txt format
+    Args:
+        input (str): input annotations folder 
+
+        target_format (str, optional): target conversion format. Defaults to "yolo".
+        augment (int, optional): how many times to augment the annotations. Defaults to 0.
+        save_folder (str, optional): temporary folder for storing the processed images. Defaults to "_kesatemp".
+        export_folder (str, optional): final export folder. Defaults to "export".
     """
-    jsonFile = json.load(open(json_path)) 
-    fullurl = urljoin(general_cfg["address"]
-                      ,f'convertLabel/{target_format}/{model_name}')
-    if augment == 0:
-        modJson = jsonFile.copy()
-        del modJson["imageData"] 
-        # makes copy and deletes 
-        # image data b64 for bandwidth savings
-        # don't need image modifications 
-        r = requests.post(fullurl, 
-                          json={"labelme_json":modJson, 
-                                "model_name":model_name, 
-                                "augment":f"{augment}"})        
-    else:
-        r = requests.post(fullurl, 
-                          json={"labelme_json":jsonFile, 
-                                "model_name":model_name, 
-                                "augment":f"{augment}"})        
-    print(r.text)
-
-
+    KesaFile = KFC()
+    KesaFile.createExportFolder(save_folder, export_folder)
+    for file in os.listdir(Path(input)):
+        if file.endswith(".json"):
+            full_pth = os.path.join(input, file)
+            result = Kesa().convertsingle(
+                                        full_pth, 
+                                        model_name, 
+                                        general_cfg,
+                                        augment = augment
+                                        )
+            # MFW NO MATCH STATEMENT COS COMPATIBILITY
+            if augment == 0:
+                anno_filename = os.path.join(input 
+                                             ,(os.path.splitext(file)[0] + ".txt")) 
+                print(result["label"]) 
+                KesaFile.writeYoloAnnotationsToTXT(anno_filename, 
+                                                   result["label"]) 
+    
 if __name__ == "__main__":
     app()

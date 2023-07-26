@@ -32,7 +32,7 @@ class Labelme2Yolo:
         self.getLabelsFromJson()
         filename = os.path.splitext(self.jsonFile["imagePath"])[0]
         unique_n = self.createUniqueFileName(filename) 
-        return unique_n, self.yoloarr
+        return self.yoloarr
     
     def convert2Yolo_aug(self,b64img, times):
         self.getLabelsFromJson_aug()
@@ -41,24 +41,28 @@ class Labelme2Yolo:
         augmentRounds = []
         total = []
         augmentImage = Aug() 
+
         for i in range(0, times):
             result = augmentImage.applyAugmentation(b64img,
                                                     self.yoloarr[0],
                                                     self.yoloarr[1])
             augmentRounds.append(result)
         for results in augmentRounds:
-            pair_coords = []
-            pair_b64 = []
             filename = os.path.splitext(self.jsonFile["imagePath"])[0]
             unique_n = self.createUniqueFileName(filename)
+            combined = [] 
             for classid, coords  in zip(self.yoloarr[0], results[1]):
                 combined = [classid, coords[0],coords[1],coords[2],coords[3]]
-                augment_dict = {
-                        "labels":combined,
-                        "base64img": str(self.mat2b64(results[0]))
-                        } 
-                total.append(augment_dict) 
-        return unique_n, total 
+
+            augment_dict = {
+                    "labels":combined,
+                    "base64img": str(self.mat2b64(results[0])),
+                    # "base64img": "testpenis",
+                    "unique_name": unique_n
+                    } 
+            total.append(augment_dict)
+
+        return total 
     
     def createUniqueFileName(self, inputFilename):
         unique_id = str(uuid.uuid4().hex)
