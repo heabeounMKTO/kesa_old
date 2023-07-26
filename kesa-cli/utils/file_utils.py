@@ -199,5 +199,5 @@ class KesaFileCli:
     def writeBase64ToImage(self, file_name, b64_img):
         im_bytes = base64.b64decode(b64_img)
         print(im_bytes)
-        nparr = np.frombuffer(im_bytes, dtype=np.uint8)\
+        nparr = np.frombuffer(im_bytes, dtype=np.uint8)
         
