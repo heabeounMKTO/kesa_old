@@ -67,19 +67,25 @@ def ayylmao():
     yeah = dict(rawcfg.items("MODEL"))
     return render_template("index.html", cuda=checkcuda, models=list(yeah.keys()))
 
-
 @app.route("/convertLabel/yolo/<modelname>", methods=["POST"])
 def convert2yolo(modelname):
     r = request
     label_data = r.json["labelme_json"]
     convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
-    if int(r.json["augment"]) == 0: 
+    if int(r.json["augment"]) <= 0: 
         unique_name,labels = convert.convert2Yolo()
         return jsonify({"unique_name":unique_name,
                         "labels":labels})
-
     else:
-        return jsonify({"response":"sorry , augmentations is not yet available!"})
+        """
+        sends back augmented images in base64 format 
+        according to the times mentioned, b64 is encoded as string
+        ples read as bytes
+        """
+        unique_name, label_aug = convert.convert2Yolo_aug(r.json["labelme_json"]["imageData"],
+                                                            int(r.json["augment"]))
+        return jsonify({"unique_name":unique_name,
+                        "label_multi":label_aug})
 
 @app.route("/modelinfo")
 def get_all_models():
