@@ -9,7 +9,7 @@ import cv2
 import label_img
 import numpy as np
 import torch
-from art import text2art 
+from art import text2art
 from flask import Flask, jsonify, render_template, request
 from kesa_print import color, kesaError, kesaLog, kesaPrintDict
 from kesa_utils import ModelUtils, CfgUtils
@@ -32,6 +32,8 @@ print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ
 """
 reads config file 
 """
+
+
 # utils
 def getdevice():
     try:
@@ -41,6 +43,8 @@ def getdevice():
         kesaError("Failed in getting GPU, falling back to CPU...")
         cudaselectdevice = select_device("cpu")
     return cudaselectdevice
+
+
 ##
 
 rawcfg, general_config = CfgUtils().read_config()
@@ -67,24 +71,26 @@ def ayylmao():
     yeah = dict(rawcfg.items("MODEL"))
     return render_template("index.html", cuda=checkcuda, models=list(yeah.keys()))
 
+
 @app.route("/convertLabel/yolo/<modelname>", methods=["POST"])
 def convert2yolo(modelname):
     r = request
     label_data = r.json["labelme_json"]
     convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
-    if int(r.json["augment"]) <= 0: 
-        unique_name,labels = convert.convert2Yolo()
-        return jsonify({"unique_name":unique_name,
-                        "labels":labels})
+    if int(r.json["augment"]) <= 0:
+        unique_name, labels = convert.convert2Yolo()
+        return jsonify({"unique_name": unique_name, "labels": labels})
     else:
         """
-        sends back augmented images in base64 format 
+        sends back augmented images in base64 format
         according to the times mentioned, b64 is encoded as string
         ples read as bytes
         """
-        label_aug = convert.convert2Yolo_aug(r.json["labelme_json"]["imageData"],
-                                                            int(r.json["augment"]))
-        return jsonify({"label_multi":label_aug})
+        label_aug = convert.convert2Yolo_aug(
+            r.json["labelme_json"]["imageData"], int(r.json["augment"])
+        )
+        return jsonify({"label_multi": label_aug})
+
 
 @app.route("/modelinfo")
 def get_all_models():

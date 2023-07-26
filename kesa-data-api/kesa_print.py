@@ -22,13 +22,20 @@ class color:
 
 def kesaLog(msg, bold=False, logtype="info"):
     log_type_definitions = {
-        "info":"[🍑 INFO]",
+        "info": "[🍑 INFO]",
         "ok": "[😔 OK LESSGOO]",
-        "aight": "[😐 AIGHT]"    
-        }
+        "aight": "[😐 AIGHT]",
+    }
 
     if bold != False:
-        print(color.BOLD + color.GREEN + f"{log_type_definitions.get(logtype)}: " + color.END + msg + color.END)
+        print(
+            color.BOLD
+            + color.GREEN
+            + f"{log_type_definitions.get(logtype)}: "
+            + color.END
+            + msg
+            + color.END
+        )
     else:
         print(color.GREEN + f"{log_type_definitions.get(logtype)}: " + color.END + msg)
 

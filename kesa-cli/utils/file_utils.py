@@ -6,23 +6,28 @@ import shutil
 import math
 import yaml
 import uuid
-import cv2 
+import cv2
+import base64
+import numpy as np
+import PIL as Image
+
 
 ext = [".jpeg", ".jpg", ".png"]
 
+
 class KesaFileCli:
     def __init__(self) -> None:
-       pass
-    
+        pass
+
     def setLabelList(self, LabelList):
-       self.LabelList = LabelList 
-    
+        self.LabelList = LabelList
+
     def setProcessingFolder(self, processingFolder):
         self.processingFolder = processingFolder
-    
+
     def setExportFolder(self, exportFolder):
         self.exportFolder = exportFolder
-     
+
     def getProcessingFolder(self):
         return self.processingFolder
 
@@ -53,12 +58,12 @@ class KesaFileCli:
             os.makedirs(os.path.join(f"{self.exportFolder}/valid", labels))
         except FileExistsError:
             print("folder already exists!")
-    
+
     def createLabelList(self):
         """
         creates data.yaml file for folder
         """
-        jsonlist = self.LabelList 
+        jsonlist = self.LabelList
         with open(os.path.join(self.exportFolder, "data.yaml"), "w") as file:
             ayylmao = dict(
                 names=jsonlist,
@@ -67,17 +72,13 @@ class KesaFileCli:
                 val=f"/{self.exportFolder}/valid/images",
                 test=f"/{self.exportFolder}/test/images",
             )
-        
-        
-        
-    def loadLabelList(self, exportFolder):
+
+    def loadLabelList(self, exportFolder) -> list:
         exportFolder = self.exportFolder
         with open(os.path.join(self.exportFolder, "data.yaml")) as file:
             data_yaml = yaml.safe_load(file)
             labellist = data_yaml["names"]
             return labellist
-    
-    
 
     def createLabelListFromFolder(self):
         """
@@ -101,7 +102,6 @@ class KesaFileCli:
                 test=f"/{self.exportFolder}/test/images",
             )
             yaml.dump(ayylmao, file, default_flow_style=None)
-
 
     def moveToFolder(self, jsonList, destinationFolder):
         def moveLabelandImage(annotation, foldername):
@@ -171,16 +171,17 @@ class KesaFileCli:
         self.moveToFolder(jsonfiles, "train")
         self.moveToFolder(jsonfiles, "valid")
         self.moveToFolder(jsonfiles, "test")
-    
-    def writeYoloAnnotationsToTXT(self, 
-                             file_name ,
-                             annotation_list,
-                             ):
+
+    def writeYoloAnnotationsToTXT(
+        self,
+        file_name,
+        annotation_list,
+    ) -> None:
         """
         writes annotation list to txt file
         Args:
             file_name (_type_): file name NO EXTENSIONS
-            annotation_list (_type_): the converted label list 
+            annotation_list (_type_): the converted label list
         """
         with open(file_name, "w") as f:
             for annotations in annotation_list:
@@ -195,5 +196,8 @@ class KesaFileCli:
                 f.write(str(annotations[4]))
                 f.write("\n")
 
-
-         
+    def writeBase64ToImage(self, file_name, b64_img):
+        im_bytes = base64.b64decode(b64_img)
+        print(im_bytes)
+        nparr = np.frombuffer(im_bytes, dtype=np.uint8)\
+        
