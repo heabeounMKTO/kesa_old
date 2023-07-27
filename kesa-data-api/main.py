@@ -106,8 +106,6 @@ def get_model_info(modelname):
             "class_names": MODEL_INFO_DICT[modelname],
         }
     )
-
-
 @app.route("/autolabel", methods=["POST"])
 def labelshit():
     r = request
@@ -121,7 +119,7 @@ def labelshit():
     loadModel = DetectMultiBackend(
         model2load, cudaselectdevice, dnn=False, data=None, fp16=True
     )
-
+    
     # label
     detectPt = label_img.imageDetect(
         img,

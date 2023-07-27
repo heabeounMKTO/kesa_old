@@ -95,6 +95,5 @@ def convertLabel(
                         annojpg_filename, annotation["base64img"]
                     )
 
-
 if __name__ == "__main__":
     app()
