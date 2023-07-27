@@ -7,6 +7,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 from utils.augmentations import letterbox
+
 # from models.common import DetectMultiBackend
 from utils.general import LOGGER, non_max_suppression, scale_coords
 from utils.torch_utils import select_device

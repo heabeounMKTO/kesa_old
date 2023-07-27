@@ -20,11 +20,24 @@ class color:
     END = "\033[0m"
 
 
-def kesaLog(msg, bold=False):
+def kesaLog(msg, bold=False, logtype="info"):
+    log_type_definitions = {
+        "info": "[🍑 INFO]",
+        "ok": "[😔 OK LESSGOO]",
+        "aight": "[😐 AIGHT]",
+    }
+
     if bold != False:
-        print(color.BOLD + color.GREEN + "[🍑 INFO]: " + color.END + msg + color.END)
+        print(
+            color.BOLD
+            + color.GREEN
+            + f"{log_type_definitions.get(logtype)}: "
+            + color.END
+            + msg
+            + color.END
+        )
     else:
-        print(color.GREEN + "[🍑 INFO]: " + color.END + msg)
+        print(color.GREEN + f"{log_type_definitions.get(logtype)}: " + color.END + msg)
 
 
 def kesaError(msg):

@@ -9,14 +9,16 @@ import cv2
 import label_img
 import numpy as np
 import torch
-from art import *
+from art import text2art
 from flask import Flask, jsonify, render_template, request
 from kesa_print import color, kesaError, kesaLog, kesaPrintDict
-from kesa_utils import ModelUtils
+from kesa_utils import ModelUtils, CfgUtils
 from models.common import DetectMultiBackend
 from utils.torch_utils import select_device
+from convert.labelme2yolo import Labelme2Yolo as L2Y
 
-## the important part
+
+## the important part, the people must know
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
 print(text2art("processing"))
 print("===========================|**|===================================")
@@ -30,9 +32,9 @@ print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ
 """
 reads config file 
 """
+
+
 # utils
-
-
 def getdevice():
     try:
         cudaselectdevice = select_device(general_config["cuda_device"])
@@ -43,22 +45,9 @@ def getdevice():
     return cudaselectdevice
 
 
-def read_config():
-    config = configparser.ConfigParser()
-    config.read("configs/auto-labelcfg.ini")
-    general_cfg = {
-        "longhu": config["MODEL"]["LONGHU"],
-        "longhu-back": config["MODEL"]["LONGHU_BACK"],
-        "confidence_thresh": float(config["INFERENCE_CONFIG"]["CONFIDENCE"]),
-        "iou_thresh": float(config["INFERENCE_CONFIG"]["IOU"]),
-        "cuda_device": int(config["DEVICE_SETTINGS"]["CUDA_DEVICE"]),
-    }
-    return config, general_cfg
-
-
 ##
 
-rawcfg, general_config = read_config()
+rawcfg, general_config = CfgUtils().read_config()
 
 
 print("ᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟᐠ⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝^⸜ˎ_ˏ⸝ᐟ^⸜ˎ_ˏ⸝ᐟ^⸜ˎ")
@@ -83,13 +72,24 @@ def ayylmao():
     return render_template("index.html", cuda=checkcuda, models=list(yeah.keys()))
 
 
-@app.route("/convertLabel", methods=["POST"])
-def convert2yolo():
+@app.route("/convertLabel/yolo/<modelname>", methods=["POST"])
+def convert2yolo(modelname):
     r = request
-    label_data = str(r.json["labeljson"])
-    for annotations in ast.literal_eval(label_data)["shapes"]:
-        print(annotations["points"])
-    return jsonify({"ayy": "lmao"})
+    label_data = r.json["labelme_json"]
+    convert = L2Y(label_data, MODEL_INFO_DICT[modelname])
+    if int(r.json["augment"]) <= 0:
+        unique_name, labels = convert.convert2Yolo()
+        return jsonify({"unique_name": unique_name, "labels": labels})
+    else:
+        """
+        sends back augmented images in base64 format
+        according to the times mentioned, b64 is encoded as string
+        ples read as bytes
+        """
+        label_aug = convert.convert2Yolo_aug(
+            r.json["labelme_json"]["imageData"], int(r.json["augment"])
+        )
+        return jsonify({"label_multi": label_aug})
 
 
 @app.route("/modelinfo")
@@ -99,16 +99,10 @@ def get_all_models():
 
 @app.route("/modelinfo/<modelname>", methods=["GET"])
 def get_model_info(modelname):
-    model2load = os.path.join("label_models", general_config[str(modelname)])
-    loadModel = DetectMultiBackend(
-        model2load, cudaselectdevice, dnn=False, data=None, fp16=True
-    )
     return jsonify(
         {
             "status": "success",
-            "class_names": loadModel.names,
-            "model_stride": loadModel.stride,
-            "isit_pt": loadModel.pt,
+            "class_names": MODEL_INFO_DICT[modelname],
         }
     )
 

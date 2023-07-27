@@ -1,4 +1,5 @@
 from clearml import Task
+
 # Connecting ClearML with the current process,
 # from here on everything is logged automatically
 from clearml.automation import HyperParameterOptimizer, UniformParameterRange

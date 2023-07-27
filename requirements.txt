@@ -19,3 +19,4 @@ albumentations
 seaborn
 art
 rich
+typer

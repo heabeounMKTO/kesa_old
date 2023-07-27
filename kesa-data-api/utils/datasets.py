@@ -21,12 +21,21 @@ import torch.nn.functional as F
 from PIL import ExifTags, Image
 from torch.utils.data import Dataset
 from torchvision.ops import ps_roi_align, ps_roi_pool, roi_align, roi_pool
+
 # from pycocotools import mask as maskUtils
 from torchvision.utils import save_image
 from tqdm import tqdm
-from utils.general import (check_requirements, clean_str, resample_segments,
-                           segment2box, segments2boxes, xyn2xy, xywh2xyxy,
-                           xywhn2xyxy, xyxy2xywh)
+from utils.general import (
+    check_requirements,
+    clean_str,
+    resample_segments,
+    segment2box,
+    segments2boxes,
+    xyn2xy,
+    xywh2xyxy,
+    xywhn2xyxy,
+    xyxy2xywh,
+)
 from utils.torch_utils import torch_distributed_zero_first
 
 # Parameters
