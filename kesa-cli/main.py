@@ -3,7 +3,7 @@ from pathlib import Path
 import typer
 import json
 import requests
-from utils.config import CfgUtils
+from utils.file_utils import CfgUtils
 from urllib.parse import urljoin
 from utils.file_utils import KesaFileCli as KFC
 from kesa import Kesa
@@ -11,8 +11,16 @@ from kesa import Kesa
 
 app = typer.Typer()
 from pathlib import Path
-
 rawcfg, general_cfg = CfgUtils().read_config()
+
+
+@app.command()
+def create_cfg(
+               device: int,
+               confidence: float = 0.8,
+               iou: float = 0.7,
+               address: str = "",
+              ):
 
 
 @app.command()

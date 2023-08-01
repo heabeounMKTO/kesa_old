@@ -10,7 +10,13 @@ import cv2
 import base64
 import numpy as np
 import PIL as Image
-
+import configparser
+from utils.torch_utils import select_device
+from pathlib import Path
+import pathlib 
+from utils.kesa_print import kesaLog, kesaError
+import gc
+from models.common import DetectMultiBackend
 
 ext = [".jpeg", ".jpg", ".png"]
 
@@ -201,3 +207,98 @@ class KesaFileCli:
         print(im_bytes)
         nparr = np.frombuffer(im_bytes, dtype=np.uint8)
         
+class FileUtils:
+    def __init__(self) -> None:
+        pass
+
+    def validateFileExists(self, file_path):
+        """
+        validates if a files exist
+        """
+        kesaLog(f"checking if file {file_path} exists")
+        file_path = os.path.join(os.getcwd(), file_path)
+        if pathlib.Path(file_path).is_file():
+            kesaLog(f"file: {file_path} found", logtype="ok")
+            return True
+        else:
+            kesaError(f"file: {file_path} NOT FOUND !?, please check & re-check")
+            return False
+
+
+class ModelUtils:
+    def __init__(self) -> None:
+        pass
+
+    def getAllModelInfoFromConfig(self, config_file):
+        """
+        get all model info from config object
+        """
+        try:
+            models_dict = dict(config_file["MODEL"])
+            modelInfoDict = {}
+            for model in models_dict:
+                model_filename = os.path.join("label_models", models_dict[model])
+
+                # check if the mf file even exist before try lodaing LMAO
+                if FileUtils().validateFileExists(model_filename):
+                    ## loads model to CPU
+                    loadModel = DetectMultiBackend(
+                        model_filename,
+                        select_device("cpu"),
+                        dnn=False,
+                        data=None,
+                        fp16=True,
+                    )
+                    # add model class info to dict
+                    modelInfoDict[model] = loadModel.names
+                else:
+                    kesaLog(f"couldnt load file: {model_filename}", logtype="aight")
+            # free memory from CPU
+            gc.collect()
+            return modelInfoDict
+        except FileNotFoundError as nofile:
+            kesaError(f"{nofile}")
+
+
+class CfgUtils:
+    def __init__(self) -> None:
+        pass
+
+    def read_config(self, config_path="config/cfg.ini"):
+        config = configparser.ConfigParser()
+        try:
+            config.read(config_path)
+            # TODO update print config to dynamically include all models,
+            # currently it works but doesnt show up on server console so it's not
+            # super cool (yEt)
+            general_cfg = {
+                "longhu": config["MODEL"]["LONGHU"],
+                "longhu-back": config["MODEL"]["LONGHU_BACK"],
+                "confidence_thresh": float(config["INFERENCE_CONFIG"]["CONFIDENCE"]),
+                "iou_thresh": float(config["INFERENCE_CONFIG"]["IOU"]),
+                "cuda_device": int(config["DEVICE_SETTINGS"]["CUDA_DEVICE"]),
+            }
+            return config, general_cfg
+        except FileNotFoundError as nofile:
+            kesaError(f"{nofile}")
+
+    def create_config(self, 
+                      address,
+                      device,
+                      confidence,
+                      iou,
+                      model_dict):
+        config = configparser.ConfigParser()
+        config["NETWORK"] = {
+            "ADDRESS":address 
+            }
+        config["DEVICE_SETTINGS"] = {
+            "CUDA_DEVICE":device
+        }
+        config["MODEL"] = model_dict
+        config["INFERENCE_CONFIG"] = {
+            "CONFIDENCE":confidence,
+            "IOU":iou
+        }
+        with open("config/cfg.ini", "w") as configfile:
+            config.write(configfile)

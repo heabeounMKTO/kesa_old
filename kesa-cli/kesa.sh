@@ -7,6 +7,7 @@ kesa_cli_welcome () {
   TASK=$(gum choose --item.foreground 78 "$LABEL" "$CONVERT" "$CONFIGURE" "$EXIT")
   echo "Task: $(gum style --foreground 212 "$TASK")"
 }
+
 kesa_cli_welcome
 
 if [ "$TASK" = "$EXIT" ]; then
@@ -17,7 +18,6 @@ elif [ "$TASK" = "$LABEL" ]; then
   AUGMENT=$(gum input --placeholder "want augmentations on your data? (please enter 0 for no augmentations)")
   YOLO="YOLOTXT"; COCO="COCO (not available yet)"; PASCAL="PascalVOC (not available yet)";
   TARGET_FMT=$(gum choose --cursor "*" --cursor-prefix "[ ] " --selected-prefix "[*] " --limit 1 "$YOLO" "$COCO" "$PASCAL")
-  MODEL=$(gum choose)
   clear; gum style --foreground 56 'Summary:'
   echo "Working Directory: $(gum style --foreground 212 "$DATASET_DIR")"
   echo "Augmentations: $(gum style --foreground 212 "$AUGMENT")"
