@@ -283,11 +283,12 @@ class CfgUtils:
             kesaError(f"{nofile}")
 
     def create_config(self, 
-                      address,
                       device,
                       confidence,
                       iou,
-                      model_dict):
+                      model_dict,
+                      address="http://localhost:6969",
+                      ):
         config = configparser.ConfigParser()
         config["NETWORK"] = {
             "ADDRESS":address 
@@ -302,3 +303,5 @@ class CfgUtils:
         }
         with open("config/cfg.ini", "w") as configfile:
             config.write(configfile)
+            
+    

@@ -178,3 +178,7 @@ export/*
 labeltest/*
 kesa-cli/testfolder/*
 .VSCodeCounter/
+
+kesa-cli/label_models/*
+
+

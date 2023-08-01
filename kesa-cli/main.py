@@ -21,6 +21,27 @@ def create_cfg(
                iou: float = 0.7,
                address: str = "",
               ):
+    """
+
+    Args:
+        device (int): device for local compute, can be 'cpu' or the gpu index 
+                      , which can be acquired by running in `nvidia-smi`   
+        confidence (float, optional): confidence threshold for auto-labeling Defaults to 0.8.
+        iou (float, optional): iou threshold for auto-labeling. Defaults to 0.7.
+        address (str, optional): remote address, defaults to localhost:6969.
+    """
+    # set with no address
+    if address == "":
+        cfgutils = CfgUtils().create_config(device=device, 
+                                            confidence=confidence,
+                                            iou=iou)
+    else:
+        cfgutils = CfgUtils().create_config(device=device, 
+                                            confidence=confidence,
+                                            iou=iou,
+                                            address=address
+                                            )
+         
 
 
 @app.command()
