@@ -286,7 +286,6 @@ class CfgUtils:
                       device,
                       confidence,
                       iou,
-                      model_dict,
                       address="http://localhost:6969",
                       ):
         config = configparser.ConfigParser()
@@ -296,7 +295,6 @@ class CfgUtils:
         config["DEVICE_SETTINGS"] = {
             "CUDA_DEVICE":device
         }
-        config["MODEL"] = model_dict
         config["INFERENCE_CONFIG"] = {
             "CONFIDENCE":confidence,
             "IOU":iou
@@ -304,4 +302,14 @@ class CfgUtils:
         with open("config/cfg.ini", "w") as configfile:
             config.write(configfile)
             
-    
+    def get_model_from_dir(self):
+        found_models = 0
+        for model in os.listdir("label_models"):
+            print(model)
+            found_models += 1
+        print(f"founded {found_models} models")
+        
+    def print_cfg(self):
+        parser = configparser.ConfigParser()
+        parser.read('config/cfg.ini')
+        print(dict(parser.keys())) 

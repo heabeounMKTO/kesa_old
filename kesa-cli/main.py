@@ -16,7 +16,7 @@ rawcfg, general_cfg = CfgUtils().read_config()
 
 @app.command()
 def create_cfg(
-               device: int,
+               device: str = 'cpu',
                confidence: float = 0.8,
                iou: float = 0.7,
                address: str = "",
