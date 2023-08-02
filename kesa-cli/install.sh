@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "installing required python dependencies"
 python3 -m venv pyenv
