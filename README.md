@@ -1,4 +1,6 @@
-# i am considering major changes ples wait 
+# this project is no longer being worked on
+
+[kesa](https://github.com/heabeounMKTO/kesa) is re-written in rust for portability 
 
 # kesa , tool for auto data labeling, conversion and augmentation                         
 # background
